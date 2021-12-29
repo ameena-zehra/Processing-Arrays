@@ -1,0 +1,296 @@
+/* CS2211a 2021 */
+/* Assignment 02 */
+/* Ameena Naqvi */
+/* 251173552 */
+/* anaqvi23 */
+/* Date Completed: October 5, 2021 */
+Script started on 2021-10-05 23:42:11-04:00 [TERM="xterm-256color" TTY="/dev/pts/116" COLUMNS="80" LINES="24"]
+]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ date
+[?2004l
+Tue 05 Oct 2021 11:42:16 PM EDT
+]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ whoami
+[?2004l
+anaqvi23
+]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ ls -l
+[?2004l
+total 29
+-rw-r--r-- 1 anaqvi23 anaqvi23 6446 Oct  5 23:35 anaqvi23_asn2.c
+-rw-r--r-- 1 anaqvi23 anaqvi23    0 Oct  5 23:42 anaqvi23_asn2.output
+-rw-r--r-- 1 anaqvi23 anaqvi23 1918 Oct  5 23:39 Asn2_SubmissionForm.txt
+]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ cat anaqvi23_asn2.c
+[?2004l
+/* CS2211a 2021 */
+/* Assignment 02 */
+/* Ameena Naqvi */
+/* 251173552 */
+/* anaqvi23 */
+/* Date Completed: October 5, 2021 */
+
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#define ITERATION_NUMBER 3
+#undef DEBUG
+
+int main()
+{   printf("Assignment Two\n\n");
+    // STEP #1: Determine the size of the array
+    // This size of the array is randomly selected based on the lower and upper boundaries described below
+    int lower = 50, upper = 50 * ITERATION_NUMBER; // These variables set out the lower and upper range of the array size based on the number of iterations
+    srand(time(NULL));
+    int arraysize = (rand() % (upper-lower+1))+lower; // This variable sets out the size of the array calculated within the set range using the random number generator
+    int originalsize= arraysize; // This variable records the array size to ensure it does not change during execution
+    int newarray[arraysize];
+    printf("Value of random size of array : %d\n", arraysize+1);
+    printf("Size of array: %lu bytes\n\n", sizeof(newarray) );
+    for (int i=1; i<=ITERATION_NUMBER; i++){
+        printf("\n-----------------------------------------------------------------------\n");
+        arraysize = originalsize;
+        printf("\n\nTHIS IS ITERATION NUMBER %d of %d\n", i, ITERATION_NUMBER);
+
+        // STEP #2: Establishing a range of numbers
+        // The upper range of numbers is determined based on the current iteration number
+        int upperboundaryforrange = 1; // This variable records the upper boundary for the range based on the iteration number
+        for (int j=i; j<= ITERATION_NUMBER; j++){
+            upperboundaryforrange*=10;
+        }
+        // DEBUG #1 Upper Range Values
+        #if defined (DEBUG)
+            printf("Upper Range Value: %d\n", upperboundaryforrange);
+        #endif
+
+        // STEP #3: Populate the array
+        // The array is populated using a random selection of numbers between 1 and the upper range determined from step 2
+        for (int k=0; k<=arraysize; k++){
+           if (k==0){
+                srand(time(NULL));
+            }
+            int numbertoinsert = (rand() % (upperboundaryforrange))+1; // This variable randomly selects a number within the range of 1 to the upper boundary
+            newarray[k]= numbertoinsert; // This number is then inserted into the array
+        }
+
+        printf("\nThis is the original array populated with values in range 1 to %d\n", upperboundaryforrange);
+
+        printf("\nNumber of elements in the original array is : %d \n", arraysize+1);
+         for (int k=0; k<=arraysize; k++){
+             if ((k%10)==0){
+                 printf("\n");
+             }
+             if (((k-1)%10)==0){
+                printf("%6d",newarray[k]);
+             }
+            else{
+                printf(" %6d",newarray[k]);
+            }
+        }
+        printf("\n\nThis is the current state of the array with all duplicate values removed\n");
+
+        // STEP #4: Removing all duplicates
+        // Starting at index 0 the for loop structure removes all duplicates from the array adding a zero for any duplicates found
+        for (int k=0; k<=arraysize; k++){
+            int numberofduplicates = 0; // This variable is used to track the number of duplicates of each variable in the list
+            for (int j=0; j<=arraysize; j++){
+                if ((newarray[k]!=0)&&(newarray[k]==newarray[j])&&(k!=j)){
+                    numberofduplicates++; // If a duplicate is found the counter is added
+                }
+            }
+            for (int z=0; z<=numberofduplicates; z++){
+                for (int j=0; j<=arraysize; j++){
+                    if ((newarray[k]!=0)&&(newarray[k]==newarray[j])&&(k!=j)){
+                        // DEBUG #2: Displays each time when matching values are found along with the indexes of matching values
+                        #if defined (DEBUG)
+                            printf("The value of %d at array index [%d] and the value of %d at array index [%d] are the same.\n", newarray[k], k, newarray[j], j);
+                        #endif
+                        for (int m=j; m<=arraysize; m++){
+                            newarray[m]=newarray[m + 1];
+                            // The new array is shifted to the left by one anytime a duplicate is found
+                        }
+                        newarray[arraysize] = 0;
+                        // Once the shift to the left occurs the last spot of the array is filled with a zero
+                    }
+                }
+            }
+        }
+
+
+        // STEP #5: Removal of zeroes
+        // In this step all zeroes placed at the end of the array in step 4 are removed from the array
+        for (int k=0; k<=arraysize; k++){
+            for (int j=k ; j<=arraysize; j++){
+                if (newarray[k]==0){
+                    for (int m=j; m<=arraysize; m++){
+                        newarray[m]=newarray[m + 1];
+
+                    }
+                    arraysize--;
+                    j--;
+                }
+            }
+        }
+        printf("\nNumber of unique (non-zero, non-duplicate) elements in the array is : %d \n", arraysize+1);
+
+        for (int k=0; k<=arraysize; k++){
+             if ((k%10)==0){
+                 printf("\n");
+             }
+             if (((k-1)%10)==0){
+                printf("%6d",newarray[k]);
+             }
+            else{
+                printf(" %6d",newarray[k]);
+            }
+        }
+
+
+        printf("\n\nThese are the unique, non-zero elements in the array sorted in ascending order :\n");
+
+
+        // STEP #6: Ordering Array in Ascending Order
+        // Using the for loop structure below the array is ordered from lowest to highest
+        for(int a=0; a<arraysize; a++)
+        {
+            for(int j=a+1; j<=arraysize; j++)
+            {
+                if(newarray[j] <newarray[a])
+                {
+                    int tmp = newarray[a];
+                    newarray[a] = newarray[j];
+                    newarray[j] = tmp;
+                }
+            }
+        }
+
+
+        for (int k=0; k<=arraysize; k++){
+             if ((k%10)==0){
+                 printf("\n");
+             }
+             if (((k-1)%10)==0){
+                printf("%6d",newarray[k]);
+             }
+            else{
+                printf(" %6d",newarray[k]);
+            }
+        }
+
+    }
+
+
+    return 0;
+}
+
+]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ gcc -o asn2 anaqvi23_asn2.c
+[?2004l
+]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ ./asn2
+[?2004l
+Assignment Two
+
+Value of random size of array : 71
+Size of array: 280 bytes
+
+
+-----------------------------------------------------------------------
+
+
+THIS IS ITERATION NUMBER 1 of 3
+
+This is the original array populated with values in range 1 to 1000
+
+Number of elements in the original array is : 71 
+
+     82   154    754    430    171    280    719    556    463    405
+    102   271    136    241    247    377    747    230    183    943
+    837   629    696    690    818    847    634    793    821    502
+    885   902    655    990    684    177    622    402     84     84
+    158   185    706    293    778    953     21    524    182    204
+    466   370    184    513     60      2    359     45    146    532
+    546   382    433    552    372    468     80    345    869    164
+    428
+
+This is the current state of the array with all duplicate values removed
+
+Number of unique (non-zero, non-duplicate) elements in the array is : 70 
+
+     82   154    754    430    171    280    719    556    463    405
+    102   271    136    241    247    377    747    230    183    943
+    837   629    696    690    818    847    634    793    821    502
+    885   902    655    990    684    177    622    402     84    158
+    185   706    293    778    953     21    524    182    204    466
+    370   184    513     60      2    359     45    146    532    546
+    382   433    552    372    468     80    345    869    164    428
+
+These are the unique, non-zero elements in the array sorted in ascending order :
+
+      2    21     45     60     80     82     84    102    136    146
+    154   158    164    171    177    182    183    184    185    204
+    230   241    247    271    280    293    345    359    370    372
+    377   382    402    405    428    430    433    463    466    468
+    502   513    524    532    546    552    556    622    629    634
+    655   684    690    696    706    719    747    754    778    793
+    818   821    837    847    869    885    902    943    953    990
+-----------------------------------------------------------------------
+
+
+THIS IS ITERATION NUMBER 2 of 3
+
+This is the original array populated with values in range 1 to 100
+
+Number of elements in the original array is : 71 
+
+     82    54     54     30     71     80     19     56     63      5
+      2    71     36     41     47     77     47     30     83     43
+     37    29     96     90     18     47     34     93     21      2
+     85     2     55     90     84     77     22      2     84     84
+     58    85      6     93     78     53     21     24     82      4
+     66    70     84     13     60      2     59     45     46     32
+     46    82     33     52     72     68     80     45     69     64
+     28
+
+This is the current state of the array with all duplicate values removed
+
+Number of unique (non-zero, non-duplicate) elements in the array is : 49 
+
+     82    54     30     71     80     19     56     63      5      2
+     36    41     47     77     83     43     37     29     96     90
+     18    34     93     21     85     55     84     22     58      6
+     78    53     24      4     66     70     13     60     59     45
+     46    32     33     52     72     68     69     64     28
+
+These are the unique, non-zero elements in the array sorted in ascending order :
+
+      2     4      5      6     13     18     19     21     22     24
+     28    29     30     32     33     34     36     37     41     43
+     45    46     47     52     53     54     55     56     58     59
+     60    63     64     66     68     69     70     71     72     77
+     78    80     82     83     84     85     90     93     96
+-----------------------------------------------------------------------
+
+
+THIS IS ITERATION NUMBER 3 of 3
+
+This is the original array populated with values in range 1 to 10
+
+Number of elements in the original array is : 71 
+
+      2     4      4     10      1     10      9      6      3      5
+      2     1      6      1      7      7      7     10      3      3
+      7     9      6     10      8      7      4      3      1      2
+      5     2      5     10      4      7      2      2      4      4
+      8     5      6      3      8      3      1      4      2      4
+      6    10      4      3     10      2      9      5      6      2
+      6     2      3      2      2      8     10      5      9      4
+      8
+
+This is the current state of the array with all duplicate values removed
+
+Number of unique (non-zero, non-duplicate) elements in the array is : 10 
+
+      2     4     10      1      9      6      3      5      7      8
+
+These are the unique, non-zero elements in the array sorted in ascending order :
+
+      1     2      3      4      5      6      7      8      9     10]0;anaqvi23@compute:~/courses/cs2211/assignments/asn2[?2004h[anaqvi23@compute asn2]$ exit
+[?2004l
+exit
+
+Script done on 2021-10-05 23:43:42-04:00 [COMMAND_EXIT_CODE="0"]
